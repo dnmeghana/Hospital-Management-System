@@ -79,6 +79,7 @@ def test_case():
         print("Test Case 4 for the function get_selected_attribute FAILED")
 
        print("Hospital management system")
+      printf("change 2")
 
 if __name__ == "__main__":
     test_case()
