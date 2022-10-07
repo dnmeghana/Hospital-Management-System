@@ -78,6 +78,7 @@ def test_case():
     except:
         print("Test Case 4 for the function get_selected_attribute FAILED")
 
+        print("HSM")
 
 if __name__ == "__main__":
     test_case()
