@@ -23,7 +23,7 @@ if(!isset($_SESSION['userId']))
   {
     $filename = $_FILES['inPic']['name'];
     move_uploaded_file($_FILES["inPic"]["tmp_name"], "photo/".$_FILES["inPic"]["name"]);
-    if ($con->query("insert into categories (name,pic) value ('$_POST[name]','$filename')")) {
+    if ($con->query("insert into categories (name,pic) value ('$_POST[inName]','$filename')")) {
       $notice ="<div class='alert alert-success'>Successfully Saved</div>";
     }
     else
@@ -49,7 +49,7 @@ if(!isset($_SESSION['userId']))
         <a href="index.php"><li style="color: white"><i class="fa fa-circle-o fa-fw"></i> Home</li></a>
         <a href="inventeries.php"><li><i class="fa fa-circle-o fa-fw"></i> Inventeries</li></a>
        <a href="addnew.php"><li><i class="fa fa-circle-o fa-fw"></i> Add New Item</li></a>
-<!--         <a href="newsell"><li><i class="fa fa-circle-o fa-fw"></i> New Sell</li></a> -->
+        <!-- <a href="newsell"><li><i class="fa fa-circle-o fa-fw"></i> New Sell</li></a> -->
         <a href="reports.php"><li><i class="fa fa-circle-o fa-fw"></i> Report</li></a>
       </ul><
     </div>
@@ -86,62 +86,95 @@ if(!isset($_SESSION['userId']))
 </div>
 
   <div class="content2">
+  	<ol class="breadcrumb ">
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+         <li class="active">Billing</li>
+    </ol>
     <?php echo $notice; ?>
-    <div>
-      <span style="font-size: 16pt;color: #333333">Categories </span>
-      <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn" style="margin-left: 2px;"><i class="fa fa-plus fa-fw"> </i>Add New Category</button> 
-      <a href="manageCat.php"><button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn"><i class="fa fa-gear  fa-fw"> </i> Manage Categories</button></a>
-
+    <div class="center">
+      <span style="font-size: 16pt;color: #333333">Billing </span>
     </div>
 
   <?php 
-    $array = $con->query("select * from categories");
-    while ($row = $array->fetch_assoc()) 
+  if (isset($_POST['updateBill'])) 
+  {
+    $id = $_POST['id'];
+    $qty = $_POST['qty'];
+    foreach ($_SESSION['bill'] as $key => $value) 
     {
-      $array2 = $con->query("select count(*) from inventeries where catId = '$row[id]'");
-      $row2 = $array2->fetch_assoc();
-  ?>
-    <a href="inventeries.php?catId=<?php echo $row['id'] ?>"><div class="box2 col-md-3">
-     <div class="center"> <img src="photo/<?php echo $row['pic'] ?>" style="width: 155px;height: 122px;" class='img-thumbnail'></div>
-      <hr style="margin: 7px;">
-      <span style="padding: 11px"><strong style="font-size: 10pt">Name</strong><span class="pull-right" style="color:blue;margin-right: 11px;"><?php echo $row['name'] ?></span></span>
-      <hr style="margin: 7px;">
-      <span style="padding: 11px"><strong style="font-size: 10pt">Available Qty</strong><span class="pull-right" style="color:blue;margin-right: 11px"><?php echo $row2['count(*)']; ?></span></span>
-    </div></a>
-  <?php
+      if($_SESSION['bill'][$key]['id'] == $id) $_SESSION['bill'][$key]['qty'] = $qty;
     }
-   ?>
+  }
+  	$i=0;$total = 0;
+    ?>
+    <br>
+    <table class="table table-hover table-striped table-bordered" style="width: 55%;margin: auto;">
+    	<tr>
+    		<th>#</th>
+    		<th>Name</th>
+    		<th>Per Unit Price</th>
+        <th>Remove</th>
+    		<th>Select Quantity</th>
+    	</tr>
+    <?php
+    foreach ($_SESSION['bill'] as $row) 
+    {
+      $i++;
+      echo "<tr>";
+      echo "<td>$i</td>";
+      echo "<td>$row[name]</td>";
+      echo "<td>Rs. $row[price]</td>";
+      echo "<td><a href='called.php?remove=$row[id]'><button class='btn btn-danger btn-xs'>Remove</button></a></td>";
+      echo "<td> 
+            <form method='POST'>
+            <input type='hidden' value='$row[id]' name='id'>
+            <input type='number' min='1' class='form-control input-sm pull-left' value ='$row[qty]' style='width:88px;' name='qty'>  <button type='submit' name='updateBill' style='margin-left:2px' class='btn btn-success btn-sm'>Update</button>
+            </form>
+            </td>";
+      echo "</tr>";
+      $total = $total + $row['price']*$row['qty'];
+    }
+  ?>
+  <tr>
+    <td colspan="2">Total Bill</td>
+    <td colspan="2"><strong>Rs.<?php echo $total ?></strong></td>
+    <td><button class="btn btn-sm btn-primary btn-block" data-toggle="modal" data-target="#billOut">View Bill</button></td>
+  </tr>
+</table>
   </div>
 </div>
 
-<div id="addIn" class="modal fade" role="dialog">
+<div id="billOut" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add New Inventory</h4>
+        <h4 class="modal-title">Purchaser Information</h4>
       </div>
-      <div class="modal-body"> <form method="POST" enctype="multipart/form-data">
+      <div class="modal-body"> <form method="POST" action="billout.php">
         <div style="width: 77%;margin: auto;">
          
           <div class="form-group">
             <label for="some" class="col-form-label">Name</label>
-            <input type="text" name="inName" class="form-control" id="some" required>
+            <input type="text" name="name" class="form-control" id="some" required>
           </div>
           <div class="form-group">
-            <label for="2" class="col-form-label">Picture</label>
-            <input type="file" name="inPic" class="form-control" id="2" required>
+            <label for="some" class="col-form-label">Contact</label>
+            <input type="text" name="contact" class="form-control" id="some" required>
           </div>
-          
+           <div class="form-group">
+            <label for="some" class="col-form-label">Discount</label>
+            <input type="text" name="discount" value="0" min="1" class="form-control" id="some" required>
+          </div>
        
         </div>
         
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" name="safeIn">Save Inventory</button>
+        <button type="submit" class="btn btn-primary" name="billInfo">View Bill</button>
       </div>
     </form>
     </div>
