@@ -23,7 +23,7 @@ if(!isset($_SESSION['userId']))
   {
     $filename = $_FILES['inPic']['name'];
     move_uploaded_file($_FILES["inPic"]["tmp_name"], "photo/".$_FILES["inPic"]["name"]);
-    if ($con->query("insert into categories (name,pic) value ('$_POST[name]','$filename')")) {
+    if ($con->query("insert into categories (name,pic) value ('$_POST[inName]','$filename')")) {
       $notice ="<div class='alert alert-success'>Successfully Saved</div>";
     }
     else
@@ -49,7 +49,7 @@ if(!isset($_SESSION['userId']))
         <a href="index.php"><li style="color: white"><i class="fa fa-circle-o fa-fw"></i> Home</li></a>
         <a href="inventeries.php"><li><i class="fa fa-circle-o fa-fw"></i> Inventeries</li></a>
        <a href="addnew.php"><li><i class="fa fa-circle-o fa-fw"></i> Add New Item</li></a>
-<!--         <a href="newsell"><li><i class="fa fa-circle-o fa-fw"></i> New Sell</li></a> -->
+        <!-- <a href="newsell"><li><i class="fa fa-circle-o fa-fw"></i> New Sell</li></a> -->
         <a href="reports.php"><li><i class="fa fa-circle-o fa-fw"></i> Report</li></a>
       </ul><
     </div>
@@ -86,30 +86,47 @@ if(!isset($_SESSION['userId']))
 </div>
 
   <div class="content2">
+  	<ol class="breadcrumb ">
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        <li class="active">Manage Category</li>
+    </ol>
     <?php echo $notice; ?>
     <div>
       <span style="font-size: 16pt;color: #333333">Categories </span>
-      <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn" style="margin-left: 2px;"><i class="fa fa-plus fa-fw"> </i>Add New Category</button> 
-      <a href="manageCat.php"><button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn"><i class="fa fa-gear  fa-fw"> </i> Manage Categories</button></a>
+      <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn"><i class="fa fa-plus fa-fw"> </i>Add New Category</button> 
+     
 
     </div>
 
   <?php 
+  	$i=0;
     $array = $con->query("select * from categories");
+    ?>
+    <br>
+    <table class="table table-hover table-striped " style="width: 55%;margin: auto;">
+    	<tr>
+    		<th>#</th>
+    		<th>Name</th>
+    		<th>Quanitity</th>
+    		<th>Action</th>
+    	</tr>
+    <?php
     while ($row = $array->fetch_assoc()) 
     {
-      $array2 = $con->query("select count(*) from inventeries where catId = '$row[id]'");
+    	$i++;
+      $array2 = $con->query("select count(*) as qty from inventeries where catId = '$row[id]'");
       $row2 = $array2->fetch_assoc();
   ?>
-    <a href="inventeries.php?catId=<?php echo $row['id'] ?>"><div class="box2 col-md-3">
-     <div class="center"> <img src="photo/<?php echo $row['pic'] ?>" style="width: 155px;height: 122px;" class='img-thumbnail'></div>
-      <hr style="margin: 7px;">
-      <span style="padding: 11px"><strong style="font-size: 10pt">Name</strong><span class="pull-right" style="color:blue;margin-right: 11px;"><?php echo $row['name'] ?></span></span>
-      <hr style="margin: 7px;">
-      <span style="padding: 11px"><strong style="font-size: 10pt">Available Qty</strong><span class="pull-right" style="color:blue;margin-right: 11px"><?php echo $row2['count(*)']; ?></span></span>
-    </div></a>
+    <tr>
+    	<td><?php echo $i ?></td>
+    	<td><?php echo $row['name']; ?></td>
+    	<td><?php echo $row2['qty']; ?></td>
+    	<td><a href="delete.php?category=<?php echo $row['id'] ?>"><button class="btn btn-xs btn-danger">Delete</button></a></td>
+    </tr>
+    
   <?php
     }
+    echo "</table>";
    ?>
   </div>
 </div>

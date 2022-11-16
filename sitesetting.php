@@ -17,20 +17,18 @@ if(!isset($_SESSION['userId']))
   <?php include 'css/customStyle.css'; ?>
 
   </style>
-  <?php 
-  $notice="";
-  if (isset($_POST['safeIn'])) 
-  {
-    $filename = $_FILES['inPic']['name'];
-    move_uploaded_file($_FILES["inPic"]["tmp_name"], "photo/".$_FILES["inPic"]["name"]);
-    if ($con->query("insert into categories (name,pic) value ('$_POST[name]','$filename')")) {
-      $notice ="<div class='alert alert-success'>Successfully Saved</div>";
-    }
-    else
-      $notice ="<div class='alert alert-danger'>Not saved Error:".$con->error."</div>";
-  }
+ <?php 
+ $notice="";
+if (isset($_POST['saveSetting'])) {
+if ($con->query("update site SET title='$_POST[title]',name='$_POST[name]'")) {
+  $notice ="<div class='alert alert-success'>Successfully Saved</div>";
+}
+else{
+  $notice ="<div class='alert alert-danger'>Error is:".$con->error."</div>";
+}
+}
 
-   ?>
+ ?>
 </head>
 <body style="background: #ECF0F5;padding:0;margin:0">
 <div class="dashboard" style="position: fixed;width: 18%;height: 100%;background:#222D32">
@@ -46,10 +44,10 @@ if(!isset($_SESSION['userId']))
     <div style="background:#1E282C;color: white;padding: 13px 17px;border-left: 3px solid #3C8DBC;"><span><i class="fa fa-dashboard fa-fw"></i> Dashboard</span></div>
     <div class="item">
       <ul class="nostyle zero">
-        <a href="index.php"><li style="color: white"><i class="fa fa-circle-o fa-fw"></i> Home</li></a>
+        <a href="index.php"><li ><i class="fa fa-circle-o fa-fw"></i> Home</li></a>
         <a href="inventeries.php"><li><i class="fa fa-circle-o fa-fw"></i> Inventeries</li></a>
-       <a href="addnew.php"><li><i class="fa fa-circle-o fa-fw"></i> Add New Item</li></a>
-<!--         <a href="newsell"><li><i class="fa fa-circle-o fa-fw"></i> New Sell</li></a> -->
+       <a href="addnew.php"><li ><i class="fa fa-circle-o fa-fw"></i> Add New Item</li></a>
+        <!-- <a href="newsell"><li><i class="fa fa-circle-o fa-fw"></i> New Sell</li></a> -->
         <a href="reports.php"><li><i class="fa fa-circle-o fa-fw"></i> Report</li></a>
       </ul><
     </div>
@@ -57,7 +55,7 @@ if(!isset($_SESSION['userId']))
   <div style="background:#1E282C;color: white;padding: 13px 17px;border-left: 3px solid #3C8DBC;"><span><i class="fa fa-globe fa-fw"></i> Other Menu</span></div>
   <div class="item">
       <ul class="nostyle zero">
-        <a href="sitesetting.php"><li><i class="fa fa-circle-o fa-fw"></i> Site Setting</li></a>
+        <a href="sitesetting.php"><li style="color: white"><i class="fa fa-circle-o fa-fw"></i> Site Setting</li></a>
        <a href="profile.php"><li><i class="fa fa-circle-o fa-fw"></i> Profile Setting</li></a>
         <a href="accountSetting.php"><li><i class="fa fa-circle-o fa-fw"></i> Account Setting</li></a>
         <a href="logout.php"><li><i class="fa fa-circle-o fa-fw"></i> Sign Out</li></a>
@@ -86,67 +84,28 @@ if(!isset($_SESSION['userId']))
 </div>
 
   <div class="content2">
-    <?php echo $notice; ?>
-    <div>
-      <span style="font-size: 16pt;color: #333333">Categories </span>
-      <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn" style="margin-left: 2px;"><i class="fa fa-plus fa-fw"> </i>Add New Category</button> 
-      <a href="manageCat.php"><button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn"><i class="fa fa-gear  fa-fw"> </i> Manage Categories</button></a>
+<ol class="breadcrumb ">
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        <li class="active">Site Setting</li>
+    </ol>
+    <?php echo $notice ?>
+    <div style="width: 55%;margin: auto;padding: 22px;" class="well well-sm center">
 
-    </div>
-
-  <?php 
-    $array = $con->query("select * from categories");
-    while ($row = $array->fetch_assoc()) 
-    {
-      $array2 = $con->query("select count(*) from inventeries where catId = '$row[id]'");
-      $row2 = $array2->fetch_assoc();
-  ?>
-    <a href="inventeries.php?catId=<?php echo $row['id'] ?>"><div class="box2 col-md-3">
-     <div class="center"> <img src="photo/<?php echo $row['pic'] ?>" style="width: 155px;height: 122px;" class='img-thumbnail'></div>
-      <hr style="margin: 7px;">
-      <span style="padding: 11px"><strong style="font-size: 10pt">Name</strong><span class="pull-right" style="color:blue;margin-right: 11px;"><?php echo $row['name'] ?></span></span>
-      <hr style="margin: 7px;">
-      <span style="padding: 11px"><strong style="font-size: 10pt">Available Qty</strong><span class="pull-right" style="color:blue;margin-right: 11px"><?php echo $row2['count(*)']; ?></span></span>
-    </div></a>
-  <?php
-    }
-   ?>
-  </div>
-</div>
-
-<div id="addIn" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add New Inventory</h4>
-      </div>
-      <div class="modal-body"> <form method="POST" enctype="multipart/form-data">
-        <div style="width: 77%;margin: auto;">
-         
-          <div class="form-group">
-            <label for="some" class="col-form-label">Name</label>
-            <input type="text" name="inName" class="form-control" id="some" required>
+      <h4>Site Setting</h4><hr>
+      <form method="POST">
+         <div class="form-group">
+            <label for="some" class="col-form-label">Site Title</label>
+            <input type="text" name="title" class="form-control" value="<?php echo siteTitle() ?>" id="some" required>
           </div>
           <div class="form-group">
-            <label for="2" class="col-form-label">Picture</label>
-            <input type="file" name="inPic" class="form-control" id="2" required>
-          </div>
-          
-       
-        </div>
-        
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" name="safeIn">Save Inventory</button>
-      </div>
-    </form>
+            <label for="some" class="col-form-label">Site Name</label>
+            <input type="text" name="name" value="<?php echo siteName() ?>" class="form-control" id="some"  required>
+          </div> 
+          <div class="center">
+            <button class="btn btn-primary btn-sm btn-block" name="saveSetting">Save Setting</button>
+          </div>   
+        </form>
     </div>
-
-  </div>
 </div>
 
 </body>

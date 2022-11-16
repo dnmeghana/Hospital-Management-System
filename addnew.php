@@ -46,10 +46,10 @@ if(!isset($_SESSION['userId']))
     <div style="background:#1E282C;color: white;padding: 13px 17px;border-left: 3px solid #3C8DBC;"><span><i class="fa fa-dashboard fa-fw"></i> Dashboard</span></div>
     <div class="item">
       <ul class="nostyle zero">
-        <a href="index.php"><li style="color: white"><i class="fa fa-circle-o fa-fw"></i> Home</li></a>
+        <a href="index.php"><li ><i class="fa fa-circle-o fa-fw"></i> Home</li></a>
         <a href="inventeries.php"><li><i class="fa fa-circle-o fa-fw"></i> Inventeries</li></a>
-       <a href="addnew.php"><li><i class="fa fa-circle-o fa-fw"></i> Add New Item</li></a>
-<!--         <a href="newsell"><li><i class="fa fa-circle-o fa-fw"></i> New Sell</li></a> -->
+       <a href="addnew.php"><li style="color: white"><i class="fa fa-circle-o fa-fw"></i> Add New Item</li></a>
+        <!-- <a href="newsell"><li><i class="fa fa-circle-o fa-fw"></i> New Sell</li></a> -->
         <a href="reports.php"><li><i class="fa fa-circle-o fa-fw"></i> Report</li></a>
       </ul><
     </div>
@@ -84,69 +84,65 @@ if(!isset($_SESSION['userId']))
     <a href="logout.php"><button class="btn btn-default pull-right" style="border-radius: 0">Sign Out</button></a>
   </div>
 </div>
+<?php 
+if (isset($_POST['saveProduct'])) {
+if ($con->query("insert into inventeries (catId,supplier,name,unit,price,description,company) values ('$_POST[catId]','$_POST[supplier]','$_POST[name]','$_POST[unit]','$_POST[price]','$_POST[discription]','$_POST[company]')")) {
+  $notice ="<div class='alert alert-success'>Successfully Saved</div>";
+}
+else{
+  $notice ="<div class='alert alert-danger'>Error is:".$con->error."</div>";
+}
+}
 
+ ?>
   <div class="content2">
-    <?php echo $notice; ?>
-    <div>
-      <span style="font-size: 16pt;color: #333333">Categories </span>
-      <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn" style="margin-left: 2px;"><i class="fa fa-plus fa-fw"> </i>Add New Category</button> 
-      <a href="manageCat.php"><button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#addIn"><i class="fa fa-gear  fa-fw"> </i> Manage Categories</button></a>
+<ol class="breadcrumb ">
+        <li><a href="index.php"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        <li class="active">Add New Product</li>
+    </ol>
+    <?php echo $notice ?>
+    <div style="width: 55%;margin: auto;padding: 22px;" class="well well-sm center">
 
-    </div>
-
-  <?php 
-    $array = $con->query("select * from categories");
-    while ($row = $array->fetch_assoc()) 
-    {
-      $array2 = $con->query("select count(*) from inventeries where catId = '$row[id]'");
-      $row2 = $array2->fetch_assoc();
-  ?>
-    <a href="inventeries.php?catId=<?php echo $row['id'] ?>"><div class="box2 col-md-3">
-     <div class="center"> <img src="photo/<?php echo $row['pic'] ?>" style="width: 155px;height: 122px;" class='img-thumbnail'></div>
-      <hr style="margin: 7px;">
-      <span style="padding: 11px"><strong style="font-size: 10pt">Name</strong><span class="pull-right" style="color:blue;margin-right: 11px;"><?php echo $row['name'] ?></span></span>
-      <hr style="margin: 7px;">
-      <span style="padding: 11px"><strong style="font-size: 10pt">Available Qty</strong><span class="pull-right" style="color:blue;margin-right: 11px"><?php echo $row2['count(*)']; ?></span></span>
-    </div></a>
-  <?php
-    }
-   ?>
-  </div>
-</div>
-
-<div id="addIn" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add New Inventory</h4>
-      </div>
-      <div class="modal-body"> <form method="POST" enctype="multipart/form-data">
-        <div style="width: 77%;margin: auto;">
-         
-          <div class="form-group">
+      <h4>Add New Product</h4><hr>
+      <form method="POST">
+         <div class="form-group">
             <label for="some" class="col-form-label">Name</label>
-            <input type="text" name="inName" class="form-control" id="some" required>
+            <input type="text" name="name" class="form-control" id="some" required>
           </div>
           <div class="form-group">
-            <label for="2" class="col-form-label">Picture</label>
-            <input type="file" name="inPic" class="form-control" id="2" required>
+            <label for="some" class="col-form-label">Unit</label>
+            <input type="text" name="unit" placeholder="i.e 50mg" class="form-control" id="some" required>
           </div>
-          
-       
-        </div>
-        
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" name="safeIn">Save Inventory</button>
-      </div>
-    </form>
+          <div class="form-group">
+            <label for="some" class="col-form-label">Price Per Unit</label>
+            <input type="number" name="price"  class="form-control" id="some" required>
+          </div>
+          <div class="form-group">
+            <label for="some" class="col-form-label">Supplier Name</label>
+            <input type="text" name="supplier"  class="form-control" id="some" required>
+          </div>
+          <div class="form-group">
+            <label for="some" class="col-form-label">Medicine Company Name</label>
+            <input type="text" name="company"  class="form-control" id="some" required>
+          </div>
+          <div class="form-group">
+            <label for="some" class="col-form-label">Select Category</label>
+            <select class="form-control" required name="catId">
+              <option selected disabled value="">Please Select Category</option>
+            <?php getAllCat(); ?>
+              
+            </select>
+          </div>
+           <div class="form-group">
+            <label for="some" class="col-form-label">Discription</label>
+          <textarea class="form-control" name="discription" required placeholder="Write some discription"></textarea> 
+          </div>
+          <div class="center">
+            <button type="submit" name="saveProduct" class="btn btn-primary">Save</button>
+            <button type="reset" class="btn btn-success">Reset</button>
+          </div>
+        </form>
     </div>
-
-  </div>
 </div>
 
 </body>
