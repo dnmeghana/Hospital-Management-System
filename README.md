@@ -50,3 +50,57 @@ The project separates frontend styling, assets, and backend PHP logical modules 
 ├── store.sql                # Complete database schema structure and relational tables
 ├── composer.json            # PHP package dependencies configuration
 └── htaccess                 # Apache server routing security configuration
+```
+
+## 🛠️ Built With
+
+- **Backend:** PHP, Hack  
+- **Frontend:** HTML5, CSS3, JavaScript, Bootstrap (Themed)  
+- **Database:** MySQL / MariaDB  
+- **Scripting:** Python (Sample tests included via `SampleTest(1).py`)  
+
+---
+
+## 💻 Getting Started
+
+### 📌 Prerequisites
+
+Make sure you have the following installed:
+
+- A local server environment (XAMPP / WAMP / MAMP)
+- PHP 7.4 or higher
+- MySQL Database Server
+
+---
+
+## ⚙️ Installation & Local Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone [https://github.com/dnmeghana/HSM.git](https://github.com/dnmeghana/HSM.git)
+```
+
+### 2. Database Configuration
+
+- Open your local database management interface (such as **phpMyAdmin**)
+- Create a new database named `hsm` (or your preferred name)
+- Import the provided database structure file: `store.sql`
+
+
+### 3. Configure Connection
+
+- Open `func1.php` (or your configuration file)
+- Ensure the database credentials match your local setup:
+
+```php
+$con = mysqli_connect("localhost", "root", "", "your_database_name");
+```
+
+### 4. Run the Application:
+
+- Boot up your Apache and MySQL servers.
+
+- Open your web browser and navigate to: `http://localhost/HSM/index.php`
+
+
